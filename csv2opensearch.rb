@@ -26,6 +26,7 @@ indexMapping = {
   }
 } 
 
+
 def usage
   puts "Usage: #{__FILE__} <index_name> <input_csv_file>"
   exit
@@ -33,16 +34,14 @@ end
 
 def createIndex(name, mapping)
   puts "Creating index #{name}."
-  client = OpenSearch::Client.new( host: 'https://admin:admin@localhost:9200/', transport_options: { ssl: { verify: false } })
-  client.indices.create(
+  @client.indices.create(
     index: name,
     body: mapping
   )
 end
 
 def indexExists(indexName)
-  client = OpenSearch::Client.new( host: 'https://admin:admin@localhost:9200/', transport_options: { ssl: { verify: false } })
-  client.indices.exists(
+  @client.indices.exists(
     index: indexName,
   )
 end
@@ -57,9 +56,8 @@ def indexData(fileName, index)
   csv = CSV.new(csvData, :headers => true, :header_converters => :symbol, :converters => :all)
   csvData = csv.to_a.map {|row| row.to_hash }
 
-  client = OpenSearch::Client.new( host: 'https://admin:admin@localhost:9200/', transport_options: { ssl: { verify: false } })
   csvData.each do |csvRow|
-    response = client.index(
+    response = @client.index(
          index: index,
              body: csvRow,
                  refresh: true
@@ -69,7 +67,17 @@ def indexData(fileName, index)
   end
 end
 
+begin
 
+  @user = ENV['OS_USER'] || "admin"
+  @password = ENV['OS_PASSWORD'] || "admin"
+  @client = OpenSearch::Client.new( host: "https://#{@user}:#{@password}@localhost:9200/", transport_options: { ssl: { verify: false } })
+
+rescue StandardError => e
+
+  puts "Something bad happened creating the OpenSearch client object."
+
+end
 
 usage if ARGV.length < 2
 indexName = ARGV[0]
