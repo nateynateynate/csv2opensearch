@@ -1,6 +1,6 @@
 # csv2opensearch
 
-Ruby singleton that indexes a CSV in OpenSearch. I wrote something simple but useful and I'd like to share it! 
+I wrote something simple but useful and I'd like to share it! Take a csv with header lines and ingest it.
 
 It assumes that the OpenSearch API is available on `localhost:9200` 
 
@@ -11,8 +11,8 @@ It assumes that the OpenSearch API is available on `localhost:9200`
 
 ## Usage
 
-First change the username and password with your favorite text editor (TODO: use environment variables for username/pass)
+Set the environment variables `OS_USER` and `OS_PASSWORD` lest they both default to `admin`
 
 `csv2opensearch.rb <index_name> <csv_filename>`
 
-
+Have fun! 
